@@ -1,6 +1,8 @@
-﻿namespace moviesMVC.Data
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+namespace moviesMVC.Data
 {
-    public class MovieDbContext
+    public class MovieDbContext : IdentityDbContext
     {
     }
 }
