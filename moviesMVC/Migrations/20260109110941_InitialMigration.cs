@@ -30,8 +30,8 @@ namespace moviesMVC.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Apellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Apellido = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     FechaNacimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ImagenUrlPerfil = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -60,7 +60,7 @@ namespace moviesMVC.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,7 +73,7 @@ namespace moviesMVC.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -194,14 +194,13 @@ namespace moviesMVC.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Titulo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     FechaLanzamiento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MinutosDuracion = table.Column<int>(type: "int", nullable: false),
-                    Sinopsis = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sinopsis = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     PosterUrlPortada = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GeneroId = table.Column<int>(type: "int", nullable: false),
-                    PlataformaId = table.Column<int>(type: "int", nullable: false),
-                    PromedioRating = table.Column<int>(type: "int", nullable: false)
+                    PlataformaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -256,7 +255,9 @@ namespace moviesMVC.Migrations
                     PeliculaId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    FechaReview = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Comentario = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    FechaReview = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {
