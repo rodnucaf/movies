@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using moviesMVC.Data;
 using moviesMVC.Models;
 
@@ -17,25 +19,48 @@ namespace moviesMVC.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string txtBusqueda = "", int generoId = 0)
         {
             const int pageSize = 8;
             if (page < 1) page = 1;
 
-            var totalCount = await _context.Peliculas.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-            if (totalPages == 0) totalPages = 1;
-            if (page > totalPages) page = totalPages;
+            var consulta = _context.Peliculas.AsQueryable();
 
-            var peliculas = await _context.Peliculas
+            if (!string.IsNullOrEmpty(txtBusqueda))
+            {
+               consulta = consulta.Where(p => p.Titulo.Contains(txtBusqueda));            
+            }
+
+            if (generoId != 0)
+            {
+                consulta = consulta.Where(p => p.GeneroId == generoId);
+            }
+
+            var totalPeliculas = await consulta.CountAsync();
+            var totalPaginas = (int)Math.Ceiling(totalPeliculas / (double)pageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+            if (page > totalPaginas) page = totalPaginas;
+
+            var peliculas = await consulta
                 .OrderBy(p => p.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalPages = totalPaginas;
             ViewBag.PageSize = pageSize;
+            ViewBag.TxtBusqueda = txtBusqueda;
+
+            var generos = await _context.Generos.OrderBy(g => g.Descripcion).ToListAsync();
+
+            generos.Insert(0, new Genero {Id = 0,  Descripcion = "Todos"});
+
+            ViewBag.GeneroId = new SelectList(
+                generos,
+                "Id",
+                "Descripcion",
+                generoId);
 
             return View(peliculas);
         }
