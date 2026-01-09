@@ -3,10 +3,48 @@
     ViewData["Title"] = "Home Page";
     var currentPage = ViewBag.CurrentPage as int? ?? 1;
     var totalPages = ViewBag.TotalPages as int? ?? 1;
+    var busqueda = ViewBag.TxtBusqueda ?? "";
+    var generoId = ViewBag.GeneroId ?? 0;
 }
     
 <main class="flex-grow-1">
     <div class="container py-4">
+        <form method="get">
+            <div class="row g-3 mb-4 align-items-center">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <button type="submit" class="input-group-text">Buscar</button>
+                        <input name="txtBusqueda" value="@busqueda" class="form-control form-control-lg" placeholder="Buscar películas..." type="text" />
+                    </div>
+                </div>
+                <div class="col-lg-6 d-flex flex-wrap gap-2 justify-content-lg-end">
+                    <div class="dropdown">
+                        <select name="generoId" asp-items="@generoId" class="form-select form-select-lg btn-outline-secondary"
+                                onchange="this.form.submit()"></select>
+                    </div>
+                    @*                     <div class="dropdown">
+                        <button aria-expanded="false" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button"> Plataforma </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Netflix</a></li>
+                            <li><a class="dropdown-item" href="#">Disney+</a></li>
+                            <li><a class="dropdown-item" href="#">HBO Max</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button aria-expanded="false" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button"> Calificación </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">5 estrellas</a></li>
+                            <li><a class="dropdown-item" href="#">4 estrellas o más</a></li>
+                            <li><a class="dropdown-item" href="#">3 estrellas o más</a></li>
+                        </ul>
+                    </div> *@
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" type="button"><span class="material-symbols-outlined align-middle">grid_view</span></button>
+                        <button class="btn btn-outline-secondary" type="button"><span class="material-symbols-outlined align-middle">view_list</span></button>
+                    </div>
+                </div>
+            </div>
+        </form>
         @if (!Model?.Any() ?? true)
         {
             <div class="alert alert-info">No hay películas para mostrar.</div>
@@ -34,16 +72,16 @@
             <nav aria-label="Paginación" class="mt-4">
                 <ul class="pagination justify-content-center">
                     <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" aria-label="Anterior">&laquo;</a>
+                        <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-txtBusqueda="@busqueda" asp-route-generoId="@generoId" aria-label="Anterior">&laquo;</a>
                     </li>
                     @for (int i = 1; i <= totalPages; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-txtBusqueda="@busqueda" asp-route-generoId="@generoId">@i</a>
                         </li>
                     }
                     <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" aria-label="Siguiente">&raquo;</a>
+                        <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-txtBusqueda="@busqueda" asp-route-generoId="@generoId" aria-label="Siguiente">&raquo;</a>
                     </li>
                 </ul>
             </nav>
