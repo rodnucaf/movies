@@ -6,8 +6,6 @@ namespace moviesMVC.Data
     {
         public static void Seed(MovieDbContext context)
         {
-            context.Database.EnsureCreated();
-
             if (context.Peliculas.Any() || context.Plataformas.Any() || context.Generos.Any())
                 return;
 
@@ -35,6 +33,7 @@ namespace moviesMVC.Data
         }
     };
 
+            // 2) Géneros
             var generos = new List<Genero>
     {
         new Genero { Descripcion = "Acción" },
@@ -53,6 +52,7 @@ namespace moviesMVC.Data
 
             var peliculas = new List<Pelicula>
     {
+        // --- Netflix ---
         new Pelicula {
             Titulo = "El irlandés",
             Sinopsis = "Frank Sheeran recuerda su vida en el crimen organizado.",
@@ -94,6 +94,7 @@ namespace moviesMVC.Data
             Genero = g["Animación"], Plataforma = p["Netflix"]
         },
 
+        // --- Prime Video ---
         new Pelicula {
             Titulo = "La guerra del mañana",
             Sinopsis = "Soldados del futuro reclutan gente del presente.",
@@ -134,6 +135,8 @@ namespace moviesMVC.Data
             PosterUrlPortada = "https://upload.wikimedia.org/wikipedia/en/d/de/Manchester_by_the_Sea.jpg",
             Genero = g["Drama"], Plataforma = p["Prime Video"]
         },
+
+        // --- Disney+ ---
         new Pelicula {
             Titulo = "Soul",
             Sinopsis = "Un profesor de música busca su propósito tras una experiencia extracorpórea.",
@@ -174,6 +177,8 @@ namespace moviesMVC.Data
             PosterUrlPortada = "https://upload.wikimedia.org/wikipedia/en/9/93/Disenchanted.jpg",
             Genero = g["Comedia"], Plataforma = p["Disney+"]
         },
+
+        // --- Max ---
         new Pelicula {
             Titulo = "Zack Snyder's Justice League",
             Sinopsis = "La versión del director del equipo de DC.",
@@ -219,5 +224,5 @@ namespace moviesMVC.Data
             context.Peliculas.AddRange(peliculas);
             context.SaveChanges();
         }
-    }
+    }    
 }

@@ -11,6 +11,15 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+//invocar la ejecucion del dbseeder con un using scope
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MovieDbContext>();
+    DbSeeder.Seed(context);
+}
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

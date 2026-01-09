@@ -9,10 +9,17 @@ namespace moviesMVC.Models
         public Pelicula? Pelicula { get; set; }
         public string UsuarioId { get; set; }
         public Usuario? Usuario { get; set; }
-        [Range(1,10)]
+        [Range(1,5)]
         public int Rating { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Comentario { get; set; }
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime FechaReview { get; set; }
-        
+        //Row version for concurrency control
+        public byte[] RowVersion { get; set; }
+
 
     }
 }
