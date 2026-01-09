@@ -17,9 +17,26 @@ namespace moviesMVC.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var peliculas = await _context.Peliculas.ToListAsync();
+            const int pageSize = 8;
+            if (page < 1) page = 1;
+
+            var totalCount = await _context.Peliculas.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
+
+            var peliculas = await _context.Peliculas
+                .OrderBy(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.PageSize = pageSize;
+
             return View(peliculas);
         }
 
