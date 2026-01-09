@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using moviesMVC.Data;
 using moviesMVC.Models;
 
@@ -18,7 +19,8 @@ namespace moviesMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            var peliculas = await _context.Peliculas.ToListAsync();
+            return View(peliculas);
         }
 
         public IActionResult Privacy()
