@@ -1,26 +1,52 @@
 ﻿@model IEnumerable<moviesMVC.Models.Pelicula>
 @{
     ViewData["Title"] = "Home Page";
+    var currentPage = ViewBag.CurrentPage as int? ?? 1;
+    var totalPages = ViewBag.TotalPages as int? ?? 1;
 }
     
 <main class="flex-grow-1">
     <div class="container py-4">
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-4">
-            @foreach (var pelicula in Model)
-            {
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="position-relative">
-                            <img alt="@pelicula.Titulo" class="card-img-top" src="@pelicula.PosterUrlPortada" />
-                        </div>
-                        <div class="card-body p-2">
-                            <h5 class="card-title fs-6 fw-semibold mb-1">@pelicula.Titulo</h5>
-                            <div class="d-flex align-items-center text-muted small">
+        @if (!Model?.Any() ?? true)
+        {
+            <div class="alert alert-info">No hay películas para mostrar.</div>
+        }
+        else
+        {
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-4">
+                @foreach (var pelicula in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img alt="@pelicula.Titulo" class="card-img-top" src="@pelicula.PosterUrlPortada" />
+                            </div>
+                            <div class="card-body p-2">
+                                <h5 class="card-title fs-6 fw-semibold mb-1">@pelicula.Titulo</h5>
+                                <div class="d-flex align-items-center text-muted small">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+
+            <nav aria-label="Paginación" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" aria-label="Anterior">&laquo;</a>
+                    </li>
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" aria-label="Siguiente">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        }
     </div>
 </main>
