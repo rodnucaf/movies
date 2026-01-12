@@ -26,7 +26,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
 })
-    .AddIdentityCookies);
+    .AddIdentityCookies();
 
 var app = builder.Build();
 
@@ -37,6 +37,14 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<MovieDbContext>();
     DbSeeder.Seed(context);
 }
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
+    options.LoginPath = "/Usuario/Login";
+    options.AccessDeniedPath = "/Usuario/AccessDenied";
+});
 
 
 // Configure the HTTP request pipeline.
@@ -50,6 +58,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
