@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using moviesMVC.Data;
+using moviesMVC.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,23 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddIdentityCore<Usuario>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 3;
+    options.Password.RequireUppercase = false;
+})
+    .AddEntityFrameworkStores<MovieDbContext>()
+    .AddRoles<IdentityRole>()
+    .AddSignInManager();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+})
+    .AddIdentityCookies);
 
 var app = builder.Build();
 
