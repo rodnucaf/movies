@@ -37,7 +37,9 @@ namespace moviesMVC.Models
 
     public class LoginViewModel
     {
+        [EmailAddress]
         public string Email { get; set; }
+        [PasswordPropertyText]
         public string Clave { get; set; }
         public bool Recordarme { get; set; }
 
