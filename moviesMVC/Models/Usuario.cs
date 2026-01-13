@@ -29,9 +29,9 @@ namespace moviesMVC.Models
         public string Apellido { get; set; }
         [EmailAddress]
         public string Email { get; set; }
-        [PasswordPropertyText]
+        [DataType(DataType.Password)]
         public string Clave { get; set; }
-        [PasswordPropertyText]
+        [DataType(DataType.Password)]
         public string ConfirmarClave { get; set; }
     }
 
@@ -40,7 +40,7 @@ namespace moviesMVC.Models
         [EmailAddress(ErrorMessage = "Ingrese un correo válido.")]
         [Required(ErrorMessage = "Ingrese el correo.")]
         public string Email { get; set; }
-        [PasswordPropertyText]
+        [DataType(DataType.Password)]
         [Required(ErrorMessage = "Ingrese la clave.")]
         public string Clave { get; set; }
         public bool Recordarme { get; set; }
