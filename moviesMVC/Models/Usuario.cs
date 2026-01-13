@@ -21,18 +21,21 @@ namespace moviesMVC.Models
 
     public class UsuarioViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Ingrese un nombre")]
         [StringLength(50)]
         public string Nombre { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Ingrese un apellido")]
         [StringLength(50)]
         public string Apellido { get; set; }
         [EmailAddress]
+        [Required(ErrorMessage = "Ingrese el correo.")]
         public string Email { get; set; }
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Ingrese la clave.")]
         public string Clave { get; set; }
         [DataType(DataType.Password)]
+        [Required(ErrorMessage = "Confirme la clave.")]
+        [Compare("Clave", ErrorMessage = "Las claves no coinciden.")]
         public string ConfirmarClave { get; set; }
     }
 
