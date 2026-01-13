@@ -30,6 +30,7 @@ namespace moviesMVC.Models
         [EmailAddress]
         public string Email { get; set; }
         [DataType(DataType.Password)]
+        [Required(ErrorMessage = "Ingrese la clave.")]
         public string Clave { get; set; }
         [DataType(DataType.Password)]
         public string ConfirmarClave { get; set; }
