@@ -79,7 +79,8 @@ namespace moviesMVC.Controllers
 
         public IActionResult Logout()
         {
-            return View();
+            _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
 
