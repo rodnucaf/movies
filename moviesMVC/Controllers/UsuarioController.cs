@@ -59,9 +59,22 @@ namespace moviesMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string user)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel usuario)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                var resultado = await _signInManager.PasswordSignInAsync(usuario.Email, usuario.Clave, usuario.Recordarme, lockoutOnFailure: false);
+                if (resultado.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Intento de inicio de sesión no válido.");
+                }
+            }
+            return View(usuario);
         }
 
         public IActionResult Logout()
