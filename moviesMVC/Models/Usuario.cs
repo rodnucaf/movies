@@ -35,7 +35,7 @@ namespace moviesMVC.Models
         public string ConfirmarClave { get; set; }
     }
 
-    public class LoginModel
+    public class LoginViewModel
     {
         public string Email { get; set; }
         public string Clave { get; set; }
