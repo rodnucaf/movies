@@ -55,6 +55,7 @@
                 @foreach (var pelicula in Model)
                 {
                     <div class="col">
+                        <a asp-action="Details" asp-route-id="@pelicula.Id">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="position-relative">
                                 <img alt="@pelicula.Titulo" class="card-img-top" src="@pelicula.PosterUrlPortada" />
@@ -65,6 +66,7 @@
                                 </div>
                             </div>
                         </div>
+                        </a>
                     </div>
                 }
             </div>
