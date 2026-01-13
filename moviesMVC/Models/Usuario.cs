@@ -37,9 +37,11 @@ namespace moviesMVC.Models
 
     public class LoginViewModel
     {
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Ingrese un correo válido.")]
+        [Required(ErrorMessage = "Ingrese el correo.")]
         public string Email { get; set; }
         [PasswordPropertyText]
+        [Required(ErrorMessage = "Ingrese la clave.")]
         public string Clave { get; set; }
         public bool Recordarme { get; set; }
 
