@@ -13,13 +13,13 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddIdentityCore<Usuario>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 3;
     options.Password.RequireUppercase = false;
 })
-    .AddEntityFrameworkStores<MovieDbContext>()
     .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<MovieDbContext>()
     .AddSignInManager();
 
 builder.Services.AddAuthentication(options =>
@@ -27,6 +27,14 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
 })
     .AddIdentityCookies();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
+    options.LoginPath = "/Usuario/Login";
+    options.AccessDeniedPath = "/Usuario/AccessDenied";
+});
 
 var app = builder.Build();
 
@@ -37,15 +45,6 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<MovieDbContext>();
     DbSeeder.Seed(context);
 }
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true;
-    options.LoginPath = "/Usuario/Login";
-    options.AccessDeniedPath = "/Usuario/AccessDenied";
-});
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
