@@ -65,6 +65,15 @@ namespace moviesMVC.Controllers
             return View(peliculas);
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var pelicula = await _context.Peliculas
+                .Include(p => p.Genero)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
