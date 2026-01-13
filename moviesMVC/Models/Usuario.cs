@@ -13,8 +13,8 @@ namespace moviesMVC.Models
         [StringLength(50)]
         public string Apellido { get; set; }
         [DataType(DataType.Date)]
-        public  DateTime FechaNacimiento { get; set; }
-        public  string ImagenUrlPerfil { get; set; }
+        public DateTime FechaNacimiento { get; set; }
+        public string ImagenUrlPerfil { get; set; }
         public List<Favorito>? PeliculasFavoritas { get; set; }
         public List<Review>? ReviewsUsuario { get; set; }
     }
@@ -35,4 +35,11 @@ namespace moviesMVC.Models
         public string ConfirmarClave { get; set; }
     }
 
+    public class LoginModel
+    {
+        public string Email { get; set; }
+        public string Clave { get; set; }
+        public bool Recordarme { get; set; }
+
+    }
 }
