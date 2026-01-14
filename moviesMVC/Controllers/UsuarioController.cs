@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using moviesMVC.Models;
 
@@ -83,6 +84,83 @@ namespace moviesMVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public async Task<IActionResult> Perfil()
+        {
+            var usuarioActual = await ObtenerUsuarioActualAsync();
 
+            if (usuarioActual == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+
+            var usuarioVM = MapearAPerfilViewModel(usuarioActual);
+
+            return View(usuarioVM);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> EditarPerfil(int usuarioId)
+        {
+           var usuarioActual = await ObtenerUsuarioActualAsync();
+            
+            var usuarioVM = MapearAPerfilViewModel(usuarioActual);
+
+            return View(usuarioVM);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditarPerfil(PerfilViewModel perfilVM)
+        {
+            var usuarioActual = await ObtenerUsuarioActualAsync();
+
+            if (ModelState.IsValid)
+            {
+                usuarioActual.Nombre = perfilVM.Nombre;
+                usuarioActual.Apellido = perfilVM.Apellido;
+                usuarioActual.Email = perfilVM.Email;
+                usuarioActual.UserName = perfilVM.Email;
+
+                var resultado = await _userManager.UpdateAsync(usuarioActual);
+
+                if (resultado.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(usuarioActual);
+                    return RedirectToAction("Perfil", "Usuario");
+                }
+                else
+                {
+                    foreach (var error in resultado.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+            return View("EditarPerfil", perfilVM);
+        }
+
+        private async Task<Usuario> ObtenerUsuarioActualAsync()
+        {
+
+            return await _userManager.GetUserAsync(User);
+        }
+
+        private PerfilViewModel MapearAPerfilViewModel(Usuario usuario)
+        {
+            return new PerfilViewModel
+            {
+                UsuarioId = usuario.Id.ToString(),
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                Email = usuario.Email,
+                ImagenUrlPerfil = usuario.ImagenUrlPerfil
+            };
+        }
+
+        private bool EsUsuarioActual(Usuario usuario)
+        {
+            var usuarioActualId = _userManager.GetUserId(User);
+            return usuario != null && usuario.Id == usuarioActualId;
+        }
     }
 }
