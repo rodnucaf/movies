@@ -1,0 +1,74 @@
+﻿@model PerfilViewModel
+@{
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>User Profile View</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <style>
+        .profile-card {
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .profile-img-container {
+            width: 160px;
+            height: 160px;
+            margin-top: -80px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+            .profile-img-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .material-symbols-outlined {
+            vertical-align: middle;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div style="height: 80px;"></div>
+                <div class="card shadow rounded-3 profile-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="profile-img-container mx-auto mb-4 bg-light">
+                            <img alt="" class="rounded-circle mx-auto d-block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxnN9nlpTqFESJa8KJ3wI8zeGDyn_b7t7XA71ZUG_upMud2TWn2_0uArAZ7rvDwl8IL5ZFXTi2YVDj90Vo4Rme5xxCflwwkaIHwUSp3lO0BPq1NsDbuCd5JSM1rV-loTpk09RLT53uN16Tt3CdDF1EQlsrKOIp8xY0JHdcex61geFEwa2b9GR9P9P8jQpF2VZw0nmqU5aj3g9BdqNGxyxLtzTl3RUC4fLDOmvkh8nHVMDJ_wji0JK4u-QdbK1LdLBP9yehKqWp_A" />
+                        </div>
+                        <h4 class="fw-bold mb-1">@Model.Nombre @Model.Apellido</h4>
+                        <div class="d-flex align-items-center justify-content-center text-muted mb-4">
+                            <span class="material-symbols-outlined me-2">mail</span>
+                            <span>@Model.Email</span>
+                        </div>
+                        <hr class="my-4 opacity-10" />
+                        <div class="d-grid">
+                            <a asp-action="EditarPerfil" asp-route-usuarioId="@Model.UsuarioId" class="btn btn-primary py-2 fw-bold" type="button">Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a class="text-decoration-none text-muted small fw-medium" href="#">
+                        <span class="material-symbols-outlined align-bottom">arrow_back</span>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
