@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using moviesMVC.Data;
 using moviesMVC.Models;
+using moviesMVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Usuario/AccessDenied";
 });
 
+builder.Services.AddScoped<ImageStorage>();
+builder.Services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = 2 * 1024 * 1024; });
+
 var app = builder.Build();
 
 //invocar la ejecucion del dbseeder con un using scope
@@ -47,14 +52,33 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+// Global exception logging to avoid silent process exits
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Unhandled exception processing request {Method} {Path}", context.Request.Method, context.Request.Path);
+        throw;
+    }
+});
+
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

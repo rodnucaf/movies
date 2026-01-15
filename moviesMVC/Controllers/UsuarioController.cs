@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using moviesMVC.Models;
+using moviesMVC.Services;
 
 namespace moviesMVC.Controllers
 {
@@ -9,10 +11,14 @@ namespace moviesMVC.Controllers
     {
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+        private readonly ImageStorage _imageStorage;
+        private readonly ILogger<UsuarioController> _logger;
+        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ImageStorage imageStorage, ILogger<UsuarioController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _imageStorage = imageStorage;
+            _logger = logger;
         }
 
         public IActionResult Register()
@@ -53,7 +59,7 @@ namespace moviesMVC.Controllers
 
             return View(usuario);
         }
-        
+
         public IActionResult Login()
         {
             return View();
@@ -78,12 +84,13 @@ namespace moviesMVC.Controllers
             return View(usuario);
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public async Task<IActionResult> Perfil()
         {
             var usuarioActual = await ObtenerUsuarioActualAsync();
@@ -99,44 +106,78 @@ namespace moviesMVC.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> EditarPerfil(int usuarioId)
+        public async Task<IActionResult> EditarPerfil()
         {
-           var usuarioActual = await ObtenerUsuarioActualAsync();
-            
+            var usuarioActual = await ObtenerUsuarioActualAsync();
+
             var usuarioVM = MapearAPerfilViewModel(usuarioActual);
 
             return View(usuarioVM);
         }
 
-        [HttpPost]
+
         [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditarPerfil(PerfilViewModel perfilVM)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View(perfilVM);
+
+            }
+
             var usuarioActual = await ObtenerUsuarioActualAsync();
 
-            if (ModelState.IsValid)
+            try
             {
-                usuarioActual.Nombre = perfilVM.Nombre;
-                usuarioActual.Apellido = perfilVM.Apellido;
-                usuarioActual.Email = perfilVM.Email;
-                usuarioActual.UserName = perfilVM.Email;
-
-                var resultado = await _userManager.UpdateAsync(usuarioActual);
-
-                if (resultado.Succeeded)
+                if (perfilVM.ImagenPerfil is not null && perfilVM.ImagenPerfil.Length > 0)
                 {
-                    await _signInManager.RefreshSignInAsync(usuarioActual);
-                    return RedirectToAction("Perfil", "Usuario");
-                }
-                else
-                {
-                    foreach (var error in resultado.Errors)
+                    if (!string.IsNullOrWhiteSpace(usuarioActual.ImagenUrlPerfil))
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+
+                        await _imageStorage.DeleteAsync(usuarioActual.ImagenUrlPerfil);
                     }
+
+
+                    var nuevaRuta = await _imageStorage.SaveAsync(usuarioActual.Id, perfilVM.ImagenPerfil);
+                    usuarioActual.ImagenUrlPerfil = nuevaRuta;
+                    perfilVM.ImagenUrlPerfil = nuevaRuta;
                 }
             }
-            return View("EditarPerfil", perfilVM);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(perfilVM);
+            }
+
+            usuarioActual.Nombre = perfilVM.Nombre;
+            usuarioActual.Apellido = perfilVM.Apellido;
+            usuarioActual.Email = perfilVM.Email;
+            usuarioActual.UserName = perfilVM.Email;
+
+            var resultado = await _userManager.UpdateAsync(usuarioActual);
+
+            if (resultado.Succeeded)
+            {
+                //await _signInManager.RefreshSignInAsync(usuarioActual);
+                return RedirectToAction("Perfil", "Usuario");
+            }
+            else
+            {
+                foreach (var error in resultado.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                    _logger.LogWarning("Error updating user {UserId}: {Error}", usuarioActual.Id, error.Description);
+                }
+            }
+
+
+
+            return View(perfilVM);
+
+
         }
 
         private async Task<Usuario> ObtenerUsuarioActualAsync()
@@ -154,13 +195,8 @@ namespace moviesMVC.Controllers
                 Apellido = usuario.Apellido,
                 Email = usuario.Email,
                 ImagenUrlPerfil = usuario.ImagenUrlPerfil
-            };
-        }
 
-        private bool EsUsuarioActual(Usuario usuario)
-        {
-            var usuarioActualId = _userManager.GetUserId(User);
-            return usuario != null && usuario.Id == usuarioActualId;
+            };
         }
     }
 }

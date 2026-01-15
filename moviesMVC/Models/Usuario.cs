@@ -54,15 +54,16 @@ namespace moviesMVC.Models
     public class PerfilViewModel
     {
         public string UsuarioId { get; set; }
-        [Required(ErrorMessage = "Tiene que haber un nombre.")]
-        [StringLength(50)]
+        //[Required(ErrorMessage = "Tiene que haber un nombre.")]
+        //[StringLength(50)]
         public string Nombre { get; set; }
-        [Required(ErrorMessage = "Tiene que haber un apellido.")]
-        [StringLength(50)]
+        //[Required(ErrorMessage = "Tiene que haber un apellido.")]
+        //[StringLength(50)]
         public string Apellido { get; set; }
-        [EmailAddress(ErrorMessage = "Ingrese un correo válido.")]
-        [Required(ErrorMessage = "Ingrese el correo.")]
+        //[EmailAddress(ErrorMessage = "Ingrese un correo válido.")]
+        //[Required(ErrorMessage = "Ingrese el correo.")]
         public string Email { get; set; }
+        public IFormFile? ImagenPerfil { get; set; }
         public string? ImagenUrlPerfil { get; set; }
 
     }
