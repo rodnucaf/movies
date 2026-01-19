@@ -74,8 +74,8 @@
             </div>
 
             @* Botones de acción *@
-            <div class="d-grid gap-3 d-sm-flex my-4">
-                <button onclick="cargarLlm('Resumen', '@Model.Titulo')" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center gap-2">
+                <div class="d-grid gap-3 d-sm-flex my-4">
+                @*<button onclick="cargarLlm('Resumen', '@Model.Titulo')" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center gap-2">
                     <span class="material-symbols-outlined">auto_awesome</span>
                     <span>Resumen IA</span>
                 </button>
@@ -88,17 +88,14 @@
                         type="button" data-bs-toggle="modal" data-bs-target="#createReviewModal">
                     <span class="material-symbols-outlined">add_notes</span>
                     <span>Crear Reseña</span>
+                </button>*@
+                
+                <button class="btn btn-secondary btn-lg d-flex align-items-center justify-content-center gap-2"
+                        type="button" data-bs-toggle="modal" data-bs-target="#createReviewModal">
+                    <span class="material-symbols-outlined">add_notes</span>
+                    <span>Crear Reseña</span>
                 </button>
             </div>
-
-            <!-- Mostrar mensajes de éxito o error -->
-            @if (TempData["ReviewExiste"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @TempData["ReviewExiste"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
 
             @* reviews *@
             <div class="mt-5">
@@ -144,7 +141,34 @@
                     }
                 </div>
             </div>
+
         </div>
     </div>
 </main>
+
+@{
+    var reviewViewModel = new ReviewCreateViewModel
+    {
+        PeliculaId = Model.Id,
+        PeliculaTitulo = Model.Titulo
+    };
+}
+
+
+<partial name="~/Views/Review/_CreateReview.cshtml" model="reviewViewModel"/>
+
+<style>
+    .star-filled {
+        color: #ffc107;
+        font-size: 24px;
+    }
+    .star-empty {
+        color: #6c757d;
+        font-size: 24px;
+    }
+    .review-card {
+        background-color: #2c2c2c;
+    }
+</style>
+
 

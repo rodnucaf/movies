@@ -53,7 +53,7 @@ namespace moviesMVC.Models
 
     public class PerfilViewModel
     {
-        public string UsuarioId { get; set; }
+        public string? UsuarioId { get; set; }
         //[Required(ErrorMessage = "Tiene que haber un nombre.")]
         //[StringLength(50)]
         public string Nombre { get; set; }

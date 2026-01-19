@@ -69,9 +69,16 @@ namespace moviesMVC.Controllers
         {
             var pelicula = await _context.Peliculas
                 .Include(p => p.Genero)
+                .Include(p => p.ListaReviews)
+                    .ThenInclude(r => r.Usuario)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            return View();
+            if (pelicula == null)
+            {
+                return NotFound();
+            }
+
+            return View(pelicula);
         }
 
         public IActionResult Privacy()
