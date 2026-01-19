@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -73,9 +74,12 @@ namespace moviesMVC.Controllers
                     .ThenInclude(r => r.Usuario)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (pelicula == null)
+            ViewBag.UserReview = false;
+
+            if (User?.Identity?.IsAuthenticated == true && pelicula.ListaReviews != null)
             {
-                return NotFound();
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                ViewBag.UserReview = !(pelicula.ListaReviews.Any(r => r.UsuarioId == userId) == null);
             }
 
             return View(pelicula);
