@@ -34,8 +34,6 @@ namespace moviesMVC.Data
             }
             
 
-
-
             if (context.Peliculas.Any() || context.Plataformas.Any() || context.Generos.Any())
                 return;
 
