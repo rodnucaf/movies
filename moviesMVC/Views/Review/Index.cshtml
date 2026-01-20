@@ -1,66 +1,50 @@
-﻿@model ReviewCreateViewModel
-@{
-}
+﻿@model List<Review>
 
-<!-- Modal -->
-
-            <h2 class="h3 fw-bold mb-4">Editar Reseña - @Model.PeliculaTitulo</h2>
-            <form asp-controller="Review" asp-action="Edit" method="post">
-                <div class="modal-body">
-                    <input type="hidden" asp-for="Id"/>
-                    <input type="hidden" asp-for="PeliculaId" />
-
-                    <div class="mb-3">
-                        <label class="form-label">Calificación</label>
-                        <div class="rating-stars">
-                            <input type="radio" asp-for="Rating" value="5" id="star5" checked="@(Model.Rating == 5)" />
-                            <label for="star5" class="star">★</label>
-                            <input type="radio" asp-for="Rating" value="4" id="star4" checked="@(Model.Rating == 4) />
-                            <label for="star4" class="star">★</label>
-                            <input type="radio" asp-for="Rating" value="3" id="star3" checked="@(Model.Rating == 3) />
-                            <label for="star3" class="star">★</label>
-                            <input type="radio" asp-for="Rating" value="2" id="star2" checked="@(Model.Rating == 2)/>
-                            <label for="star2" class="star">★</label>
-                            <input type="radio" asp-for="Rating" value="1" id="star1" checked="@(Model.Rating == 1)/>
-                            <label for="star1" class="star">★</label>
-                        </div>
-                        <span asp-validation-for="Rating" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Comentario" class="form-label">Comentario</label>
-                        <textarea asp-for="Comentario" class="form-control" rows="4" placeholder="Compartí tu opinión sobre esta película:"></textarea>
-                        <span asp-validation-for="Comentario" class="text-danger"></span>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
 
 <style>
-    .rating-stars {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
+    .star-filled {
+        color: #ffc107;
     }
 
-        .rating-stars input[type="radio"] {
-            display: none;
-        }
-
-        .rating-stars label {
-            font-size: 2rem;
-            color: #ddd;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-            .rating-stars input[type="radio"]:checked ~ label,
-            .rating-stars label:hover,
-            .rating-stars label:hover ~ label {
-                color: #ffc107;
-            }
+    .star-empty {
+        color: #6c757d;
+    }
 </style>
+
+<h2 class="h3 fw-bold mb-4">Mis Reseñas</h2>
+
+
+<div class="mt-5">
+    <div class="list-group">
+
+        @foreach (var item in Model)
+        {
+            <div class="list-group-item bg-dark text-light border-secondary review-card p-4 mb-3">
+                <div class="d-flex align-items-center mb-3">
+                    <img alt="@item.Pelicula.Titulo" class="rounded-circle me-3" height="40" src="@item.Pelicula.PosterUrlPortada" width="40" />
+                    <div>
+                        <h5 class="mb-0 text-light">@item.Pelicula.Titulo</h5>
+                        <small class="">Fecha Reseña: @item.FechaReview.ToShortDateString()</small>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= item.Rating)
+                        {
+                            <span class="material-symbols-outlined star-filled">star</span>
+                        }
+                        else
+                        {
+                            <span class="material-symbols-outlined star-empty">grade</span>
+                        }
+                    }
+                </div>
+                <p class="mb-3">@item.Comentario</p>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a>
+            </div>
+        }
+
+    </div>
+</div>

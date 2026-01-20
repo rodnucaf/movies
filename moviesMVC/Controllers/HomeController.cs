@@ -68,10 +68,13 @@ namespace moviesMVC.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
+            if (id == 0)
+                return NotFound();
+
             var pelicula = await _context.Peliculas
                 .Include(p => p.Genero)
                 .Include(p => p.ListaReviews)
-                    .ThenInclude(r => r.Usuario)
+                .ThenInclude(r => r.Usuario)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             ViewBag.UserReview = false;
@@ -79,7 +82,7 @@ namespace moviesMVC.Controllers
             if (User?.Identity?.IsAuthenticated == true && pelicula.ListaReviews != null)
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                ViewBag.UserReview = !(pelicula.ListaReviews.Any(r => r.UsuarioId == userId) == null);
+                ViewBag.UserReview = !(pelicula.ListaReviews.FirstOrDefault(r => r.UsuarioId == userId) == null);
             }
 
             return View(pelicula);

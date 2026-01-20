@@ -25,7 +25,7 @@ namespace moviesMVC.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            var reviews = _context.Reviews
+            var reviews = await _context.Reviews
                 .Include(r => r.Pelicula)
                 .Where(r => r.UsuarioId == userId)
                 .ToListAsync();
@@ -89,24 +89,65 @@ namespace moviesMVC.Controllers
         }
 
         // GET: ReviewController/Edit/5
-        public ActionResult Edit(int id)
+        [Authorize]
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var review = _context.Reviews
+                .Include(r => r.Pelicula)
+                .FirstOrDefault(r => r.Id == id);
+            if (review == null)
+                return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            if (review.UsuarioId != user.Id && !_userManager.IsInRoleAsync(user, "Admin").Result)
+                return Forbid();
+
+            var reviewViewModel = new ReviewCreateViewModel
+            {
+                Id = review.Id,
+                PeliculaId = review.PeliculaId,
+                UsuarioId = review.UsuarioId,
+                Rating = review.Rating,
+                Comentario = review.Comentario,
+                PeliculaTitulo = review.Pelicula?.Titulo
+            };
+
+            return View(reviewViewModel);
         }
 
         // POST: ReviewController/Edit/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(ReviewCreateViewModel review)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var reviewExistente = _context.Reviews.FirstOrDefault(r => r.Id == review.Id);
+                    if (reviewExistente == null)
+                        return NotFound();
+
+                    var user = await _userManager.GetUserAsync(User);
+                    if (review.UsuarioId != user.Id )
+                        return Forbid();
+
+                    reviewExistente.Rating = review.Rating;
+                    reviewExistente.Comentario = review.Comentario;
+                    _context.Reviews.Update(reviewExistente);
+                    _context.SaveChanges();
+                    return RedirectToAction("Index", "Review");
+                }
+
+
+                return View(review);
             }
             catch
             {
-                return View();
+                return View(review);
             }
+
         }
 
         // GET: ReviewController/Delete/5
