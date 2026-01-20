@@ -50,7 +50,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<MovieDbContext>();
     var userManager = services.GetRequiredService<UserManager<Usuario>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    DbSeeder.Seed(context, userManager, roleManager);
+   await DbSeeder.Seed(context, userManager, roleManager);
 }
 
 // Configure the HTTP request pipeline.
