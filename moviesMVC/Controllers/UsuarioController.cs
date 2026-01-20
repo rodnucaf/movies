@@ -38,7 +38,7 @@ namespace moviesMVC.Controllers
                     Email = usuario.Email,
                     Nombre = usuario.Nombre,
                     Apellido = usuario.Apellido,
-                    ImagenUrlPerfil = "default-profile.png"
+                    ImagenUrlPerfil = "/images/default-avatar.png"
                 };
 
                 var resultado = await _userManager.CreateAsync(nuevoUsuario, usuario.Clave);
