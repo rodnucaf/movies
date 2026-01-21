@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using moviesMVC.Data;
 using moviesMVC.Models;
+using moviesMVC.Service;
 using moviesMVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<ImageStorage>();
 builder.Services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = 2 * 1024 * 1024; });
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 var app = builder.Build();
 
