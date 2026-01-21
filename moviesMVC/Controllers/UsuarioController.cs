@@ -198,5 +198,10 @@ namespace moviesMVC.Controllers
 
             };
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
