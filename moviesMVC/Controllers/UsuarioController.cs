@@ -14,8 +14,8 @@ namespace moviesMVC.Controllers
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
         private readonly ImageStorage _imageStorage;
-        private readonly SmtpEmailService _emailService;
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ImageStorage imageStorage, SmtpEmailService emailService)
+        private readonly IEmailService _emailService;
+        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ImageStorage imageStorage, IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -48,7 +48,7 @@ namespace moviesMVC.Controllers
                 if (resultado.Succeeded)
                 {
                     await _signInManager.SignInAsync(nuevoUsuario, isPersistent: false);
-                    await _emailService.SendAsync(nuevoUsuario.Email, "Bienvenido a MoviesMVC", "<h1>Gracias por registrarte!</h1> <p>Esperamos que disfrutes de nuestra plataforma. :´)</p>");
+                    await _emailService.SendAsync(nuevoUsuario.Email, "Bienvenido a MoviesMVC", "<h1>Gracias por registrarte en MoviesMVC</h1><p>Esperamos que disfrutes de nuestra plataforma.</p>");
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -172,7 +172,7 @@ namespace moviesMVC.Controllers
                 foreach (var error in resultado.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
-                    _logger.LogWarning("Error updating user {UserId}: {Error}", usuarioActual.Id, error.Description);
+                    //_logger.LogWarning("Error updating user {UserId}: {Error}", usuarioActual.Id, error.Description);
                 }
             }
 
